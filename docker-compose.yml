@@ -1,0 +1,37 @@
+version: "3.8"
+services:
+  db:
+    container_name: "post"
+    image: "mysql"
+    volumes:
+      - mydb:/var/lib/postgresql/data
+    env_file:
+      - config/Back.env
+    restart: always
+    ports:
+      - "3306:3306"
+  backend:
+    build:
+      context: ./Express-cheburechnay
+      dockerfile: Dockerfile
+    ports:
+      - "3007:3007"
+    env_file:
+      - config/Back.env
+    restart: always
+    volumes:
+      - ./elflowServer/static:/app/static
+    depends_on:
+      - db
+  frontend:
+    build:
+      context: ./cheburechnay
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    env_file:
+      - config/Front.env
+    restart: always
+volumes:
+  mydb:
+    driver: local
